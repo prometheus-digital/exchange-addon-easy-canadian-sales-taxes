@@ -140,7 +140,7 @@ class IT_Exchange_Product_Feature_Product_Canadian_Tax_Status {
 			return;
 
 		// Get new value from post
-		$new_value = empty( $_POST['it-exchange-add-on-easy-us-sales-taxes-canadian-tax-status'] ) ? '' : $_POST['it-exchange-add-on-easy-us-sales-taxes-canadian-tax-status'] ;
+		$new_value = empty( $_POST['it-exchange-add-on-easy-us-sales-taxes-canadian-tax-status'] ) ? false : true;
 
 		// Save new value
 		it_exchange_update_product_feature( $product_id, 'canadian-tax-status', $new_value );
