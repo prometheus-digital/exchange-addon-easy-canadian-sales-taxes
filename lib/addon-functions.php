@@ -15,7 +15,7 @@ function it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $rate
 		
 	$output  = '<div class="item-row block-row">'; //start block-row
 	
-	$output .= '<div class="item-column block-column">';
+	$output .= '<div class="item-column block-column block-column-1">';
     $output .= '<select name="tax-rates[' . $row . '][province]">';
 
 	$provinces = it_exchange_get_data_set( 'states', array( 'country' => 'CA' ) );
@@ -28,7 +28,7 @@ function it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $rate
     $output .= '</select>';
 	$output .= '</div>';
 	
-	$output .= '<div class="item-column block-column">';
+	$output .= '<div class="item-column block-column block-column-2">';
     $output .= '<select name="tax-rates[' . $row . '][type]">';
 	
 	$tax_types = it_exchange_easy_canadian_sales_taxes_get_tax_types();
@@ -41,16 +41,16 @@ function it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $rate
 	$output .= '</select>';
 	$output .= '</div>';
 	
-	$output .= '<div class="item-column block-column">';
+	$output .= '<div class="item-column block-column block-column-3">';
 	$output .= '<input type="text" name="tax-rates[' . $row . '][rate]" value="' . $rate['rate'] . '" />';
 	$output .= '</div>';
 	
-	$output .= '<div class="item-column block-column">';
+	$output .= '<div class="item-column block-column block-column-4">';
 	$shipping = empty( $rate['shipping'] ) ? false : true;
 	$output .= '<input type="checkbox" name="tax-rates[' . $row . '][shipping]" ' . checked( $shipping, true, false ) . ' />';
 	$output .= '</div>';
 	
-	$output .= '<div class="item-column block-column">';
+	$output .= '<div class="item-column block-column block-column-delete">';
 	$output .= '<a href class="it-exchange-easy-canadian-sales-taxes-addon-delete-tax-rate it-exchange-remove-item">&times;</a>';
 	$output .= '</div>';
 	
