@@ -251,8 +251,10 @@ class IT_Exchange_Easy_Canadian_Sales_Taxes_Add_On {
 			</div>
 			<?php
 			$row = 0;
-			//ITDebug::print_r( $settings['tax-rates'] );
-			foreach( $settings['tax-rates'] as $rate ) {
+			//Alpha Sort
+			$tax_rates = $settings['tax-rates'];
+			uasort( $tax_rates, function( $a, $b ) { return strcmp( $a['province'], $b['province'] ); } );
+			foreach( $tax_rates as $rate ) {
 				echo it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $rate );
 				$row++;
 			}
