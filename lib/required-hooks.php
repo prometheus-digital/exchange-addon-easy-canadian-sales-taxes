@@ -118,7 +118,7 @@ function it_exchange_easy_canadian_sales_taxes_addon_admin_wp_enqueue_styles() {
 	if ( ( isset( $post_type ) && 'it_exchange_prod' === $post_type )
 		|| ( !empty( $_GET['add-on-settings'] ) && 'exchange_page_it-exchange-addons' === $hook_suffix && 'easy-canadian-sales-taxes' === $_GET['add-on-settings'] ) ) {
 		
-		wp_enqueue_style( 'it-exchange-easy-canadian-sales-taxes-addon-admin-style', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/add-edit-product.css' );
+		wp_enqueue_style( 'it-exchange-easy-canadian-sales-taxes-addon-admin-style', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/admin.css' );
 		
 	}
 
@@ -212,41 +212,29 @@ add_filter( 'it_exchange_possible_template_paths', 'it_exchange_easy_canadian_sa
 */
 function it_exchange_easy_canadian_sales_taxes_addon_taxes_modify_total( $total ) {
 	if ( !it_exchange_is_page( 'cart' ) || it_exchange_in_superwidget() ) //we jcanadiant don't want to modify anything on the cart page
-		$total += it_exchange_easy_canadian_sales_taxes_addon_get_taxes_for_cart( false );
+		$total += it_exchange_easy_canadian_sales_taxes_addon_get_total_taxes_for_cart( false );
 	return $total;
 }
 add_filter( 'it_exchange_get_cart_total', 'it_exchange_easy_canadian_sales_taxes_addon_taxes_modify_total' );
 
 /**
- * Backbone template for primary Tax Exemption Manager screen.
- * Invoked by wp.template() and WordPress 
- *
- * add_action( 'wp_footer', 'it_exchange_easy_canadian_sales_taxes_addon_manage_certificates_backbone_template' );
+ * Save Taxes to Transaction Meta
  *
  * @since 1.0.0
- */
-function it_exchange_easy_canadian_sales_taxes_addon_manage_certificates_backbone_template() {
-	?>
-	<script type="text/template" id="tmpl-it-exchange-easy-canadian-sales-taxes-manage-certs-container">
-		<span class="it-exchange-acanadiant-close-cert-manager"><a href="">&times;</a></span>
-		<div id="it-exchange-easy-canadian-sales-taxes-exemption-manager">
-			<div id="it-exchange-easy-canadian-sales-taxes-exemption-manager-title-area">
-				<h3 class="it-exchange-acanadiant-tax-emeption-title">
-					<?php _e( 'Tax Exemption Manager', 'LION' ); ?>
-				</h3>
-			</div>
-			
-			<div id="it-exchange-easy-canadian-sales-taxes-exemption-manager-content-area">
-				<div id="it-exchange-easy-canadian-sales-taxes-exemption-manager-add-new-certificates">
-					<div id="it-exchange-easy-canadian-sales-taxes-exemption-manager-error-area"></div>
-					<img title="Create/register a new Exemption Certificate" src="//taxcloud.net/imgs/cert/new_certificate150x120.png" style="cursor:pointer;" height="120" width="150" align="left" />
-					<?php
-					echo it_exchange_easy_canadian_sales_taxes_addon_add_exemption();
-					?>
-				</div>
-				<div id="it-exchange-easy-canadian-sales-taxes-exemption-manager-existing-certificates"></div>
-			</div>
-		</div>
-	</script>
-	<?php
+ *
+ * @param int $transaction_id Transaction ID
+*/
+function it_exchange_easy_canadian_sales_taxes_transaction_hook( $transaction_id ) {
+	$tax_session = it_exchange_get_session_data( 'addon_easy_canadian_sales_taxes' );
+	
+	if ( !empty( $tax_session['taxes'] ) ) {
+		update_post_meta( $transaction_id, '_it_exchange_easy_canadian_sales_taxes', $tax_session['taxes'] );
+	}
+	if ( !empty( $tax_session['total_taxes'] ) ) {
+		update_post_meta( $transaction_id, '_it_exchange_easy_canadian_sales_taxes_total', $tax_session['total_taxes'] );
+	}
+	
+	it_exchange_clear_session_data( 'addon_easy_canadian_sales_taxes' );
+	return;
 }
+add_action( 'it_exchange_add_transaction_success', 'it_exchange_easy_canadian_sales_taxes_transaction_hook' );

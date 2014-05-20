@@ -5,12 +5,13 @@
  * @since 1.0.0
 */
 
-function it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $rate=array() ) {
+function it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $province, $rate=array() ) {
 	if ( empty( $rate ) ) { //just set some defaults
-		$rate['province'] = 'AB';
-		$rate['type']     = 'GST';
-		$rate['rate']     = '5';
-		$rate['shipping'] = false;
+		$rate['AB'] = array(
+			'type'     => 'GST',
+			'rate'     => '5',
+			'shipping' => false,
+		);
 	}
 		
 	$output  = '<div class="item-row block-row">'; //start block-row
@@ -21,7 +22,7 @@ function it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $rate
 	$provinces = it_exchange_get_data_set( 'states', array( 'country' => 'CA' ) );
 	foreach( $provinces as $abbr => $name ) {
 		
-		$output .= '<option value="' . $abbr . '" ' . selected( $abbr, $rate['province'], false ) . '>' . $name . '</option>';
+		$output .= '<option value="' . $abbr . '" ' . selected( $abbr, $province, false ) . '>' . $name . '</option>';
 		
 	}
 	
@@ -70,24 +71,86 @@ function it_exchange_easy_canadian_sales_taxes_get_tax_types() {
 	return apply_filters( 'it_exchange_easy_canadian_sales_taxes_tax_types', array( 'GST', 'HST', 'PST' ) );	
 }
 
-/**
- * Gets tax information from transaction meta
- *
- * @since 1.0.0
- *
- * @param bool $format_price Whether or not to format the price or leave as a float
- * @return string The calculated tax from TaxCloud
-*/
+function it_exchange_easy_canadian_sales_taxes_setup_session( $clear_cache=false ) {
+	$tax_session = it_exchange_get_session_data( 'addon_easy_canadian_sales_taxes' );
+	$settings = it_exchange_get_option( 'addon_easy_canadian_sales_taxes' );
+	$taxes = array();
+	$total_taxes = 0;
+	
+	//We always want to get the Shipping Address if it's available...
+	$address = it_exchange_get_cart_shipping_address();
+	
+	//We only care about the province!
+	if ( empty( $address['state'] ) ) 
+		$address = it_exchange_get_cart_billing_address();
+	
+	//State = Province in Canada
+	if ( !empty( $address['state'] ) && !empty( $settings['tax-rates'][$address['state']] ) ) {
+		if ( !empty( $address['country'] ) && 'CA' !== $address['country'] ) {
+			return false;
+		}
+	} else {
+		return false;
+	}
 
-function it_exchange_easy_canadian_sales_taxes_addon_get_taxes_for_confirmation( $format_price=true ) {
-    $taxes = 0;
-    if ( !empty( $GLOBALS['it_exchange']['transaction'] ) ) {
-        $transaction = $GLOBALS['it_exchange']['transaction'];
-        $taxes = get_post_meta( $transaction->ID, '_it_exchange_easy_canadian_sales_taxes', true );
-    }
-    if ( $format_price )
-        $taxes = it_exchange_format_price( $taxes );
-    return $taxes;  
+	$cart_subtotal = 0;
+	if ( ! $products = it_exchange_get_cart_products() )
+		return false;
+
+	foreach( (array) $products as $product ) {
+		if ( !it_exchange_product_supports_feature( $product['product_id'], 'canadian-tax-exempt-status' )	
+				|| !it_exchange_product_has_feature( $product['product_id'], 'canadian-tax-exempt-status' ) ) {
+			$cart_subtotal += it_exchange_get_cart_product_subtotal( $product, false );
+		}
+	}
+	$cart_subtotal = apply_filters( 'it_exchange_get_cart_subtotal', $cart_subtotal );
+	$cart_subtotal_w_shipping = $cart_subtotal + it_exchange_get_cart_shipping_cost( false, false );
+	
+	if ( !empty( $tax_session ) ) {
+		//We want to store the province, in case it changes so we know we need to recalculate tax
+		if ( empty( $tax_session['province'] ) || $address['state'] != $tax_session['province'] ) {
+			$tax_session['province'] = $address['state'];
+			$clear_cache = true; //re-calculate taxes
+		}
+	
+		//We want to store the cart subtotal, in case it changes so we know we need to recalculate tax
+		if ( empty( $tax_session['cart_subtotal'] ) || $cart_subtotal != $tax_session['cart_subtotal'] ) {
+			$tax_session['cart_subtotal'] = $cart_subtotal;
+			$clear_cache = true; //re-calculate taxes
+		}
+		
+		//We want to store the cart subtotal with shipping, in case it changes so we know we need to recalculate tax
+		if ( empty( $tax_session['cart_subtotal_w_shipping'] ) || $cart_subtotal_w_shipping != $tax_session['cart_subtotal_w_shipping'] ) {
+			$tax_session['cart_subtotal_w_shipping'] = $cart_subtotal_w_shipping;
+			$clear_cache = true; //re-calculate taxes
+		}
+		
+	} else {
+		$clear_cache = true; //not really any cache, but it's easier this way :)
+	}
+	
+	if ( $clear_cache ) {
+		$tax_rates = $settings['tax-rates'][$address['state']];
+		foreach ( $tax_rates as $tax ) {
+			if ( $tax['shipping'] ) {
+				$tax['total'] = ( $tax_session['cart_subtotal_w_shipping'] * ( $tax['rate'] / 100 ) );
+			} else {
+				$tax['total'] = ( $tax_session['cart_subtotal'] * ( $tax['rate'] / 100 ) );
+			}
+			$taxes[] = $tax;
+			$total_taxes += $tax['total'];
+		}
+	} else {
+		$taxes = $tax_session['taxes'];
+		$total_taxes = $tax_session['total_taxes'];
+	}
+	
+	$tax_session['taxes'] = $taxes;
+	$tax_session['total_taxes'] = $total_taxes;
+	it_exchange_update_session_data( 'addon_easy_canadian_sales_taxes', $tax_session );
+									
+	return true;
+
 }
 
 /**
@@ -99,196 +162,16 @@ function it_exchange_easy_canadian_sales_taxes_addon_get_taxes_for_confirmation(
  * @param bool $clear_cache Whether or not to force clear any cached tax values
  * @return string The calculated tax from TaxCloud
 */
-function it_exchange_easy_canadian_sales_taxes_addon_get_taxes_for_cart(  $format_price=true, $clear_cache=false ) {
-	// Grab the tax rate
-	$settings  = it_exchange_get_option( 'addon_easy_canadian_sales_taxes' );
+function it_exchange_easy_canadian_sales_taxes_addon_get_total_taxes_for_cart( $format_price=true, $clear_cache=false ) {
 	$taxes = 0;
-	$cart = it_exchange_get_cart_data();
-	$tax_cloud_session = it_exchange_get_session_data( 'addon_easy_canadian_sales_taxes' );
-	
-	$origin = array(
-		'Address1' => $settings['bcanadianiness_address_1'],
-		'City'     => $settings['bcanadianiness_city'],
-		'State'    => $settings['bcanadianiness_state'],
-		'Zip5'     => $settings['bcanadianiness_zip_5'],
-		'Zip4'     => $settings['bcanadianiness_zip_4'],
-	);
-	if ( !empty( $settings['bcanadianiness_address_2'] ) )
-		$origin['Address2'] = $settings['bcanadianiness_address_2'];
-	
-	//We always wnat to get the Shipping Address if it's available...
-	$address = it_exchange_get_cart_shipping_address();
-	
-	//We at minimum need the Address1 and Zip
-	if ( empty( $address['address1'] ) && empty( $address['zip'] ) ) 
-		$address = it_exchange_get_cart_billing_address();
-	
-	if ( !empty( $address['address1'] ) && !empty( $address['zip'] ) ) {
-		if ( !empty( $address['country'] ) && 'US' !== $address['country'] ) {
-			//This is US taxes any other country and we don't need to calculate the tax
-			if ( $format_price )
-				$taxes = it_exchange_format_price( $taxes ); //zero
-			return $taxes;
+
+	if ( it_exchange_easy_canadian_sales_taxes_setup_session() ) {
+		$tax_session = it_exchange_get_session_data( 'addon_easy_canadian_sales_taxes' );
+		if ( !empty( $tax_session['total_taxes'] ) ) {
+			$taxes = $tax_session['total_taxes'];
 		}
-		
-		$dest = array(
-			'Address1' => $address['address1'],
-			'Address2' => !empty( $address['address2'] ) ? $address['address2'] : '',
-			'City'     => !empty( $address['city'] ) ? $address['city'] : '',
-			'State'    => !empty( $address['state'] ) ? $address['state'] : '',
-			'Zip5'     => substr( $address['zip'], 0, 5 ), // jcanadiant get the first five
-		);
-		if ( !empty( $address['zip4'] ) )
-			$dest['Zip4'] = $address['zip4'];
-		
-		$serialized_dest = maybe_serialize( $dest );
-		
-		//We want to store the destination, in case it changes so we know we need to generate tax from TaxCloud
-		if ( empty( $tax_cloud_session['destination'] ) || $serialized_dest != $tax_cloud_session['destination'] ) {
-			$tax_cloud_session['destination'] = $serialized_dest;
-			$clear_cache = true; //force a new API call to TaxCloud to get the new tax
-		}
-	} else {
-		if ( $format_price )
-			$taxes = it_exchange_format_price( $taxes ); //zero
-		return $taxes;
 	}
-	
-	$products = it_exchange_get_cart_products();
-	$products_hash = md5( maybe_serialize( $products ) );
-	
-	$shipping_cost = it_exchange_get_cart_shipping_cost( false, false );
-	if ( empty( $tax_cloud_session['shipping_cost'] ) 
-		|| $tax_cloud_session['shipping_cost'] != $shipping_cost ) {
-		$tax_cloud_session['shipping_cost'] = $shipping_cost;
-		$clear_cache = true;
-	}
-			
-	// if we don't have a cache of the products_hash 
-	// OR if the current cache doesn't match the current products hash
-	if ( $clear_cache || empty( $tax_cloud_session['products_hash'] )
-		|| $tax_cloud_session['products_hash'] !== $products_hash 
-		|| !empty( $tax_cloud_session['new_certificate'] ) ) {
-	
-		$product_count = it_exchange_get_cart_products_count( true );
-		$applied_coupons = it_exchange_get_applied_coupons();
-		$ccanadiantomer = it_exchange_get_current_ccanadiantomer();
-			
-		$cart_items = array();
-		$i = 0;
-		//build the TaxCloud Query
-		foreach( $products as $product ) {
-			$price = it_exchange_get_cart_product_base_price( $product, false );
-			$product_tic = it_exchange_get_product_feature( $product['product_id'], 'canadian-tic', array( 'setting' => 'code' ) );
-			if ( !empty( $applied_coupons ) ) {
-				foreach( $applied_coupons as $type => $coupons ) {
-					foreach( $coupons as $coupon ) {
-						if ( 'cart' === $type ) {
-							if ( '%' === $coupon['amount_type'] ) {
-								$price *= ( $coupon['amount_number'] / 100 );
-							} else {
-								$price -= ( $coupon['amount_number'] / $product_count );
-							}
-						} else if ( 'product' === $type ) {
-							if ( $coupon['product_id'] === $product['product_id'] ) {
-								if ( '%' === $coupon['amount_type'] ) {
-									$price *= ( $coupon['amount_number'] / 100 );
-								} else {
-									$price -= ( $coupon['amount_number'] / $product_count );
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			$cart_items[] = array(
-				'Index'  => $i,
-				'TIC'    => $product_tic,
-				'ItemID' => $product['product_id'],
-				'Price'  => $price,
-				'Qty'    => $product['count'],
-			);
-			$i++;
-		}
-		
-		//Add shipping, let TaxCloud decide if it needs to be taxed
-		//TIC for Shipping is always 11010
-		if ( !empty( $shipping_cost ) ) {
-			$cart_items[] = array(
-				'Index'  => $i,
-				'TIC'    => '11010',
-				'ItemID' => 'Shipping',
-				'Price'  => $shipping_cost,
-				'Qty'    => 1,
-			);
-		}
-		
-		if ( !empty( $settings['tax_exemptions'] ) && !empty( $tax_cloud_session['exempt_certificate'] ) ) {		
-			$exempt_cert = $tax_cloud_session['exempt_certificate'];
-			$tax_cloud_session['new_certificate'] = false;
-		} else {
-			$exempt_cert = null;
-		}
-
-		$query = array(
-			'apiLoginID'        => $settings['tax_cloud_api_id'],
-			'apiKey'            => $settings['tax_cloud_api_key'],
-			'ccanadiantomerID'        => $ccanadiantomer->ID,
-			'cartID'            => '',
-			'cartItems'         => $cart_items,
-			'origin'            => $origin,
-			'destination'       => $dest,
-			'deliveredBySeller' => FALSE,
-			'exemptCert'        => $exempt_cert,
-		);
-		
-		try {
-        	$args = array(
-        		'headers' => array(
-        			'Content-Type' => 'application/json',
-        		),
-				'body' => json_encode( $query ),
-		    );
-        	$result = wp_remote_post( ITE_TAXCLOUD_API . 'Lookup', $args );
-
-			if ( is_wp_error( $result ) ) {
-				throw new Exception( $result->get_error_message() );
-			} else if ( !empty( $result['body'] ) ) {
-				$body = json_decode( $result['body'] );
-				if ( 0 != $body->ResponseType ) {
-					$checkout_taxes = 0;
-					foreach( $body->CartItemsResponse as $item ) {
-						$checkout_taxes += $item->TaxAmount;
-					}
-					$taxes = apply_filters( 'it_exchange_easy_canadian_sales_taxes_addon_get_taxes_for_cart', $checkout_taxes );
-					$tax_cloud_session['cart_id'] = $body->CartID; //we need this to authorize and capture the tax
-					$tax_cloud_session['products_hash'] = $products_hash;
-				} else {
-					$errors = array();
-					foreach( $body->Messages as $message ) {
-						$errors[] = $message->Message;
-					}
-					throw new Exception( sprintf( __( 'Unable to calculate Tax: %s', 'LION' ), implode( ',', $errors ) ) );
-
-				}
-			} else {
-				throw new Exception( __( 'Unable to verify calculate Tax: Unknown Error', 'LION' ) );
-			}
-        } 
-        catch( Exception $e ) {
-			$errors[] = $e->getMessage();
-			$new_values['bcanadianiness_verified'] = false;
-        }
-	} else {
-	
-		$taxes = $tax_cloud_session['taxes'];
-		
-	}
-				
-	$tax_cloud_session['taxes'] = $taxes;
-	it_exchange_update_session_data( 'addon_easy_canadian_sales_taxes', $tax_cloud_session );
-
+								
 	if ( $format_price )
 		$taxes = it_exchange_format_price( $taxes );
 	return $taxes;

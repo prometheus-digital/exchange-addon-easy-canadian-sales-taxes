@@ -6,6 +6,11 @@
 */
 
 /**
+ * New API functions.
+*/
+include( 'api/load.php' );
+
+/**
  * Exchange will build your add-on's settings page for you and link to it from our add-on
  * screen. You are free to link from it elsewhere as well if you'd like... or to not use our API
  * at all. This file has all the functions related to registering the page, printing the form, and saving

@@ -4,11 +4,11 @@
  * By default, it registers a metabox on the product's add/edit screen and provides HTML / data for the frontend.
  *
  * @since 1.0.0 
- * @package exchange-addon-easy-canadian-tax-status
+ * @package exchange-addon-easy-canadian-sales-taxes
 */
 
 
-class IT_Exchange_Product_Feature_Product_Canadian_Tax_Status {
+class IT_Exchange_Product_Feature_Product_Canadian_Tax_Exempt_Status {
 
 	/**
 	 * Constructor. Registers hooks
@@ -16,17 +16,17 @@ class IT_Exchange_Product_Feature_Product_Canadian_Tax_Status {
 	 * @since 1.0.0
 	 * @return void
 	*/
-	function IT_Exchange_Product_Feature_Product_Canadian_Tax_Status() {
+	function IT_Exchange_Product_Feature_Product_Canadian_Tax_Exempt_Status() {
 		if ( is_admin() ) {
 			add_action( 'load-post-new.php', array( $this, 'init_feature_metaboxes' ) );
 			add_action( 'load-post.php', array( $this, 'init_feature_metaboxes' ) );
 			add_action( 'it_exchange_save_product', array( $this, 'save_feature_on_product_save' ) );
 		}
 		add_action( 'it_exchange_enabled_addons_loaded', array( $this, 'add_feature_support_to_product_types' ) );
-		add_action( 'it_exchange_update_product_feature_canadian-tax-status', array( $this, 'save_feature' ), 9, 2 );
-		add_filter( 'it_exchange_get_product_feature_canadian-tax-status', array( $this, 'get_feature' ), 9, 2 );
-		add_filter( 'it_exchange_product_has_feature_canadian-tax-status', array( $this, 'product_has_feature') , 9, 2 );
-		add_filter( 'it_exchange_product_supports_feature_canadian-tax-status', array( $this, 'product_supports_feature') , 9, 2 );
+		add_action( 'it_exchange_update_product_feature_canadian-tax-exempt-status', array( $this, 'save_feature' ), 9, 2 );
+		add_filter( 'it_exchange_get_product_feature_canadian-tax-exempt-status', array( $this, 'get_feature' ), 9, 2 );
+		add_filter( 'it_exchange_product_has_feature_canadian-tax-exempt-status', array( $this, 'product_has_feature') , 9, 2 );
+		add_filter( 'it_exchange_product_supports_feature_canadian-tax-exempt-status', array( $this, 'product_supports_feature') , 9, 2 );
 	}
 
 	/**
@@ -36,14 +36,14 @@ class IT_Exchange_Product_Feature_Product_Canadian_Tax_Status {
 	*/
 	function add_feature_support_to_product_types() {
 		// Register the product feature
-		$slug        = 'canadian-tax-status';
+		$slug        = 'canadian-tax-exempt-status';
 		$description = __( "Set the Product's Taxability Information Class", 'LION' );
 		it_exchange_register_product_feature( $slug, $description );
 
 		// Add it to all enabled product-type addons
 		$products = it_exchange_get_enabled_addons( array( 'category' => 'product-type' ) );
 		foreach( $products as $key => $params ) {
-			it_exchange_add_feature_support_to_product_type( 'canadian-tax-status', $params['slug'] );
+			it_exchange_add_feature_support_to_product_type( 'canadian-tax-exempt-status', $params['slug'] );
 		}
 	}
 
@@ -80,7 +80,7 @@ class IT_Exchange_Product_Feature_Product_Canadian_Tax_Status {
 			$product_type = it_exchange_get_product_type( $post );
 
 		if ( !empty( $post_type ) && 'it_exchange_prod' === $post_type ) {
-			if ( !empty( $product_type ) &&  it_exchange_product_type_supports_feature( $product_type, 'canadian-tax-status' ) )
+			if ( !empty( $product_type ) &&  it_exchange_product_type_supports_feature( $product_type, 'canadian-tax-exempt-status' ) )
 				add_action( 'it_exchange_product_metabox_callback_' . $product_type, array( $this, 'register_metabox' ) );
 		}
 
@@ -95,7 +95,7 @@ class IT_Exchange_Product_Feature_Product_Canadian_Tax_Status {
 	 * @return void
 	*/
 	function register_metabox() {
-		add_meta_box( 'it-exchange-product-canadian-tax-status', __( 'Canadian Tax Status', 'LION' ), array( $this, 'print_metabox' ), 'it_exchange_prod', 'normal' );
+		add_meta_box( 'it-exchange-product-canadian-tax-exempt-status', __( 'Canadian Tax Status', 'LION' ), array( $this, 'print_metabox' ), 'it_exchange_prod', 'normal' );
 	}
 
 	/**
@@ -106,14 +106,14 @@ class IT_Exchange_Product_Feature_Product_Canadian_Tax_Status {
 	*/
 	function print_metabox( $product ) {
 		// Set description		
-		$tax_status = it_exchange_get_product_feature( $product->ID, 'canadian-tax-status' );
+		$tax_status = it_exchange_get_product_feature( $product->ID, 'canadian-tax-exempt-status' );
 
 		?>
 		
 		<p>
-            <label for="easy-us-sales-taxes-canadian-tax-status"><?php _e( 'Tax Exempt?', 'LION' ) ?></label>
+            <label for="easy-us-sales-taxes-canadian-tax-exempt-status"><?php _e( 'Tax Exempt?', 'LION' ) ?></label>
 			
-			<input type="checkbox" name="it-exchange-add-on-easy-us-sales-taxes-canadian-tax-status" id="canadian-tax-status" <?php checked( $tax_status ); ?> />
+			<input type="checkbox" name="it-exchange-add-on-easy-us-sales-taxes-canadian-tax-exempt-status" id="canadian-tax-exempt-status" <?php checked( $tax_status ); ?> />
         </p>
 		<?php
 	}
@@ -136,14 +136,14 @@ class IT_Exchange_Product_Feature_Product_Canadian_Tax_Status {
 			return;
 
 		// Abort if this product type doesn't support this feature
-		if ( ! it_exchange_product_type_supports_feature( $product_type, 'canadian-tax-status' ) )
+		if ( ! it_exchange_product_type_supports_feature( $product_type, 'canadian-tax-exempt-status' ) )
 			return;
 
 		// Get new value from post
-		$new_value = empty( $_POST['it-exchange-add-on-easy-us-sales-taxes-canadian-tax-status'] ) ? false : true;
+		$new_value = empty( $_POST['it-exchange-add-on-easy-us-sales-taxes-canadian-tax-exempt-status'] ) ? false : true;
 
 		// Save new value
-		it_exchange_update_product_feature( $product_id, 'canadian-tax-status', $new_value );
+		it_exchange_update_product_feature( $product_id, 'canadian-tax-exempt-status', $new_value );
 
 	}
 
@@ -156,7 +156,7 @@ class IT_Exchange_Product_Feature_Product_Canadian_Tax_Status {
 	 * @return bolean
 	*/
 	function save_feature( $product_id, $new_value ) {
-		update_post_meta( $product_id, '_it-exchange-add-on-easy-us-sales-taxes-canadian-tax-status', $new_value );
+		update_post_meta( $product_id, '_it-exchange-add-on-easy-us-sales-taxes-canadian-tax-exempt-status', $new_value );
 		return true;
 	}
 
@@ -169,7 +169,7 @@ class IT_Exchange_Product_Feature_Product_Canadian_Tax_Status {
 	 * @return string product feature
 	*/
 	function get_feature( $existing, $product_id ) {
-		if ( $tax_status = get_post_meta( $product_id, '_it-exchange-add-on-easy-us-sales-taxes-canadian-tax-status', true ) ) {
+		if ( $tax_status = get_post_meta( $product_id, '_it-exchange-add-on-easy-us-sales-taxes-canadian-tax-exempt-status', true ) ) {
 			return $tax_status;
 		}
 		return false;
@@ -206,10 +206,10 @@ class IT_Exchange_Product_Feature_Product_Canadian_Tax_Status {
 	function product_supports_feature( $result, $product_id ) {
 		// Does this product type support this feature?
 		$product_type = it_exchange_get_product_type( $product_id );
-		if ( ! it_exchange_product_type_supports_feature( $product_type, 'canadian-tax-status' ) )
+		if ( ! it_exchange_product_type_supports_feature( $product_type, 'canadian-tax-exempt-status' ) )
 			return false;
 
 		return true;
 	}
 }
-$IT_Exchange_Product_Feature_Product_Canadian_Tax_Status = new IT_Exchange_Product_Feature_Product_Canadian_Tax_Status();
+$IT_Exchange_Product_Feature_Product_Canadian_Tax_Exempt_Status = new IT_Exchange_Product_Feature_Product_Canadian_Tax_Exempt_Status();

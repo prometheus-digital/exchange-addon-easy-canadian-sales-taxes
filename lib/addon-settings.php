@@ -27,107 +27,116 @@ function it_exchange_easy_canadian_sales_taxes_settings_callback() {
 function it_exchange_easy_canadian_sales_taxes_default_settings( $defaults ) {
 	$defaults = array(
 		'tax-rates' => array(
-			array(
-				'province' => 'AB', // Alberta
-				'type'     => 'GST',
-				'rate'     => '5',
-				'shipping' => false,
+			'AB' => array( //Province
+				array(
+					'type'     => 'GST', //Type
+					'rate'     => '5',   //Rate
+					'shipping' => false, //Apply to Shipping
+				),
 			),
-			array(
-				'province' => 'BC', // British Columbia
-				'type'     => 'GST',
-				'rate'     => '5',
-				'shipping' => false,
+			'BC' => array( // British Columbia
+				array(
+					'type'     => 'GST', //Type
+					'rate'     => '5',   //Rate
+					'shipping' => false, //Apply to Shipping
+				),
+				array(
+					'type'     => 'PST', //Type
+					'rate'     => '7',   //Rate
+					'shipping' => false, //Apply to Shipping
+				),
 			),
-			array(
-				'province' => 'BC', // British Columbia
-				'type'     => 'PST',
-				'rate'     => '7',
-				'shipping' => false,
+			'MB' => array( // Manitoba
+				array(
+					'type'     => 'GST',
+					'rate'     => '5',
+					'shipping' => false,
+				),
+				array(
+					'type'     => 'PST',
+					'rate'     => '8',
+					'shipping' => false,
+				),
 			),
-			array(
-				'province' => 'MB', // Manitoba
-				'type'     => 'GST',
-				'rate'     => '5',
-				'shipping' => false,
+			'NB' => array( // New Brunswick
+				array(
+					'type'     => 'HST',
+					'rate'     => '13',
+					'shipping' => false,
+				),
 			),
-			array(
-				'province' => 'MB', // Manitoba
-				'type'     => 'PST',
-				'rate'     => '8',
-				'shipping' => false,
+			'NF' => array( // Newfoundland
+				array(
+					'type'     => 'HST',
+					'rate'     => '13',
+					'shipping' => false,
+				),
 			),
-			array(
-				'province' => 'NB', // New Brunswick
-				'type'     => 'HST',
-				'rate'     => '13',
-				'shipping' => false,
+			'NT' => array( // Northwest Territories
+				array(
+					'type'     => 'GST',
+					'rate'     => '5',
+					'shipping' => false,
+				),
 			),
-			array(
-				'province' => 'NF', // Newfoundland
-				'type'     => 'HST',
-				'rate'     => '13',
-				'shipping' => false,
+			'NS' => array( // Nova Scotia
+				array(
+					'type'     => 'HST',
+					'rate'     => '15',
+					'shipping' => false,
+				),
 			),
-			array(
-				'province' => 'NT', // Northwest Territories
-				'type'     => 'GST',
-				'rate'     => '5',
-				'shipping' => false,
+			'NU' => array( // Nunavut
+				array(
+					'type'     => 'GST',
+					'rate'     => '5',
+					'shipping' => false,
+				),
 			),
-			array(
-				'province' => 'NS', // Nova Scotia
-				'type'     => 'HST',
-				'rate'     => '15',
-				'shipping' => false,
+			'ON' => array( // Ontario
+				array(
+					'type'     => 'HST',
+					'rate'     => '13',
+					'shipping' => false,
+				),
+			),// Prince Edward Island
+			'PE' => array(
+				array(
+					'type'     => 'HST',
+					'rate'     => '14',
+					'shipping' => false,
+				),
 			),
-			array(
-				'province' => 'NU', // Nunavut
-				'type'     => 'GST',
-				'rate'     => '5',
-				'shipping' => false,
+			'QC' => array( // Quebec
+				array(
+					'type'     => 'GST',
+					'rate'     => '5',
+					'shipping' => false,
+				),
+				array(
+					'type'     => 'PST',
+					'rate'     => '9.975',
+					'shipping' => false,
+				),
 			),
-			array(
-				'province' => 'ON', // Ontario
-				'type'     => 'HST',
-				'rate'     => '13',
-				'shipping' => false,
+			'SK' => array( // Saskatchewan
+				array(
+					'type'     => 'GST',
+					'rate'     => '5',
+					'shipping' => false,
+				),
+				array(
+					'type'     => 'PST',
+					'rate'     => '5',
+					'shipping' => false,
+				),
 			),
-			array(
-				'province' => 'PE', // Prince Edward Island
-				'type'     => 'HST',
-				'rate'     => '14',
-				'shipping' => false,
-			),
-			array(
-				'province' => 'QC', // Quebec
-				'type'     => 'GST',
-				'rate'     => '5',
-				'shipping' => false,
-			),
-			array(
-				'province' => 'QC', // Quebec
-				'type'     => 'PST',
-				'rate'     => '9.975',
-				'shipping' => false,
-			),
-			array(
-				'province' => 'SK', // Saskatchewan
-				'type'     => 'GST',
-				'rate'     => '5',
-				'shipping' => false,
-			),
-			array(
-				'province' => 'SK', // Saskatchewan
-				'type'     => 'PST',
-				'rate'     => '5',
-				'shipping' => false,
-			),
-			array(
-				'province' => 'YT', // Yukon Territory
-				'type'     => 'PST',
-				'rate'     => '5',
-				'shipping' => false,
+			'YT' => array( // Yukon Territory
+				array(
+					'type'     => 'PST',
+					'rate'     => '5',
+					'shipping' => false,
+				),
 			),
 		),
 	);
@@ -236,7 +245,7 @@ class IT_Exchange_Easy_Canadian_Sales_Taxes_Add_On {
 			<div id="canadian-tax-rate-table">
 			<?php
 			$headings = array(
-				__( 'Province', 'LION' ), __( 'Tax Type', 'LION' ), __( 'Tax Rate', 'LION' ), __( 'Apply to Shipping?', 'LION' )
+				__( 'Province', 'LION' ), __( 'Tax Type', 'LION' ), __( 'Tax Rate %', 'LION' ), __( 'Apply to Shipping?', 'LION' )
 			);
 			?>
 			<div class="heading-row block-row">
@@ -253,10 +262,12 @@ class IT_Exchange_Easy_Canadian_Sales_Taxes_Add_On {
 			$row = 0;
 			//Alpha Sort
 			$tax_rates = $settings['tax-rates'];
-			uasort( $tax_rates, function( $a, $b ) { return strcmp( $a['province'], $b['province'] ); } );
-			foreach( $tax_rates as $rate ) {
-				echo it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $rate );
-				$row++;
+			ksort( $tax_rates );
+			foreach( $tax_rates as $province => $rates ) {
+				foreach( $rates as $rate ) {
+					echo it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $province, $rate );
+					$row++;
+				}
 			}
 			?>
 			</div>
@@ -287,7 +298,8 @@ class IT_Exchange_Easy_Canadian_Sales_Taxes_Add_On {
     	global $new_values; //We set this as global here to modify it in the error check
     	
         $defaults = it_exchange_get_option( 'addon_easy_canadian_sales_taxes' );
-        $new_values = wp_parse_args( ITForm::get_post_data(), $defaults );
+        $new_values = ITForm::get_post_data();
+        $organized_values = array();
                 
         // Check nonce
         if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'it-exchange-easy-canadian-sales-taxes-settings' ) ) {
@@ -296,7 +308,28 @@ class IT_Exchange_Easy_Canadian_Sales_Taxes_Add_On {
         }
 
         $errors = apply_filters( 'it_exchange_add_on_easy_canadian_sales_taxes_validate_settings', $this->get_form_errors( $new_values ), $new_values );
-        if ( ! $errors && it_exchange_save_option( 'addon_easy_canadian_sales_taxes', $new_values ) ) {
+        
+        if ( empty( $errors ) ) {
+	        foreach( $new_values['tax-rates'] as $value ) {
+	        	if ( !empty( $organized_values['tax-rates'][$value['province']] ) ) {
+			        array_push( $organized_values['tax-rates'][$value['province']], array(
+			        	'type'     => $value['type'],
+			        	'rate'     => $value['rate'],
+			        	'shipping' => $value['shipping'],
+			        ) );
+	        	} else {
+			        $organized_values['tax-rates'][$value['province']] = array(
+				        array(
+				        	'type'     => $value['type'],
+				        	'rate'     => $value['rate'],
+				        	'shipping' => $value['shipping'],
+				        ),
+			        );
+		        }
+	        }
+        }
+                        
+        if ( ! $errors && it_exchange_save_option( 'addon_easy_canadian_sales_taxes', $organized_values ) ) {
             ITUtility::show_status_message( __( 'Settings saved.', 'LION' ) );
         } else if ( $errors ) {
             $errors = implode( '<br />', $errors );
@@ -315,9 +348,26 @@ class IT_Exchange_Easy_Canadian_Sales_Taxes_Add_On {
      * @return void
     */
     public function get_form_errors( $values ) {
-    	global $new_values;
-
-        $errors = array();
+		$provinces = it_exchange_get_data_set( 'states', array( 'country' => 'CA' ) );
+    	$tax_types = it_exchange_easy_canadian_sales_taxes_get_tax_types();
+    	
+    	if ( !empty( $values['tax-rates'] ) )
+    		$tax_rates = $values['tax-rates'];
+    	else
+	        return array( __( 'Unable to find tax rates to save, please try again.', 'LION' ) );
+    
+        foreach( $tax_rates as $tax_rate ) {
+        	if ( empty( $tax_rate['province'] ) || empty( $provinces[$tax_rate['province']] ) ) {
+                $errors[] = __( 'Missing or Invalid Province.', 'LION' );
+	        	break;
+        	} else if ( empty( $tax_rate['type'] ) || !in_array( $tax_rate['type'], $tax_types ) ) {
+                $errors[] = __( 'Missing or Invalid Tax Type.', 'LION' );
+	        	break;
+        	} else if ( empty( $tax_rate['rate'] ) ) {
+                $errors[] = __( 'Missing or Invalid Tax Rate.', 'LION' );
+	        	break;
+        	}
+        }
 
         return $errors;
     }

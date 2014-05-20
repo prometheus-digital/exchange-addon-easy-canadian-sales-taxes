@@ -15,11 +15,11 @@
 */
 ?>
 
-<?php do_action( 'it_exchange_super_widget_checkout_before_easy_us_sales_taxes_element' ); ?>
+<?php do_action( 'it_exchange_super_widget_checkout_before_easy_canadian_sales_taxes_element' ); ?>
 <div class="cart-taxes cart-totals-row">
-	<?php do_action( 'it_exchange_super_widget_checkout_begin_easy_us_sales_taxes_element' ); ?>
-	<?php _e( 'Tax', 'LION' ) . _x( ':', 'Used in superwidget for taxes. eg Tax: ', 'LION' ); ?> <?php esc_attr_e( it_exchange_easy_us_sales_taxes_addon_get_taxes_for_cart() ); ?>
-	<?php echo it_exchange_easy_us_sales_taxes_addon_exemptions(); ?>
-	<?php do_action( 'it_exchange_super_widget_checkout_end_easy_us_sales_taxes_element' ); ?>
+	<?php do_action( 'it_exchange_super_widget_checkout_begin_easy_canadian_sales_taxes_element' ); ?>
+	<?php _e( 'Tax', 'LION' ) . _x( ':', 'Used in superwidget for taxes. eg Tax: ', 'LION' ); ?> 
+	<?php it_exchange( 'canadian-taxes', 'taxes' ); ?>
+	<?php do_action( 'it_exchange_super_widget_checkout_end_easy_canadian_sales_taxes_element' ); ?>
 </div>
-<?php do_action( 'it_exchange_super_widget_checkout_after_easy_us_sales_taxes_element' ); ?>
+<?php do_action( 'it_exchange_super_widget_checkout_after_easy_canadian_sales_taxes_element' ); ?>

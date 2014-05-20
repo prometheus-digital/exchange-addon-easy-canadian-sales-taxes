@@ -15,19 +15,19 @@
 */
 ?>
 
-<?php do_action( 'it_exchange_content_confirmation_before_easy_us_sales_taxes_element' ); ?>
+<?php do_action( 'it_exchange_content_confirmation_before_easy_canadian_sales_taxes_element' ); ?>
 <div class="it-exchange-confirmation-totals-title it-exchange-table-column">
-	<?php do_action( 'it_exchange_content_confirmation_before_easy_us_sales_taxes_label' ); ?>
+	<?php do_action( 'it_exchange_content_confirmation_before_easy_canadian_sales_taxes_label' ); ?>
 	<div class="it-exchange-table-column-inner">
 		<?php _e( 'Tax', 'LION' ); ?>
 	</div>
-	<?php do_action( 'it_exchange_content_confirmation_after_easy_us_sales_taxes_label' ); ?>
+	<?php do_action( 'it_exchange_content_confirmation_after_easy_canadian_sales_taxes_label' ); ?>
 </div>
 <div class="it-exchange-confirmation-totals-amount it-exchange-table-column">
-	<?php do_action( 'it_exchange_content_confirmation_before_easy_us_sales_taxes_value' ); ?>
+	<?php do_action( 'it_exchange_content_confirmation_before_easy_canadian_sales_taxes_value' ); ?>
 	<div class="it-exchange-table-column-inner">
-		<?php echo it_exchange_easy_us_sales_taxes_addon_get_taxes_for_confirmation(); ?>
+		<?php it_exchange( 'canadian-taxes', 'confirmation-taxes' ); ?>
 	</div>
-	<?php do_action( 'it_exchange_content_confirmation_after_easy_us_sales_taxes_value' ); ?>
+	<?php do_action( 'it_exchange_content_confirmation_after_easy_canadian_sales_taxes_value' ); ?>
 </div>
-<?php do_action( 'it_exchange_content_confirmation_after_easy_us_sales_taxes_element' ); ?>
+<?php do_action( 'it_exchange_content_confirmation_after_easy_canadian_sales_taxes_element' ); ?>
