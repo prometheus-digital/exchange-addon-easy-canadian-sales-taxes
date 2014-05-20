@@ -278,11 +278,6 @@ class IT_Exchange_Easy_Canadian_Sales_Taxes_Add_On {
 			<p class="add-new">
 				<?php $form->add_button( 'new-tax-rate', array( 'value' => __( 'Add New Tax Rate', 'LION' ), 'class' => 'button button-secondary button-large' ) ); ?>
 			</p>
-			
-			<p class="reset">
-				<?php $form->add_button( 'reset-tax-rates', array( 'value' => __( 'Reset All Tax Rates', 'LION' ), 'class' => 'button button-secondary button-large' ) ); ?>
-			</p>
-
             
 		</div>
 		<?php
