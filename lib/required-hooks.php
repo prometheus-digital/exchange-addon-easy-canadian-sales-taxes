@@ -126,6 +126,26 @@ function it_exchange_easy_canadian_sales_taxes_addon_admin_wp_enqueue_styles() {
 add_action( 'admin_print_styles', 'it_exchange_easy_canadian_sales_taxes_addon_admin_wp_enqueue_styles' );
 
 /**
+ * Loads the frontend CSS on all exchange pages
+ *
+ * @since 1.0.0
+ *
+ * @return void
+*/
+function it_exchange_easy_canadian_sales_taxes_load_public_scripts( $current_view ) {
+	
+	if ( it_exchange_is_page( 'checkout' ) || it_exchange_is_page( 'confirmation' ) || it_exchange_in_superwidget() ) {
+
+		$url_base = ITUtility::get_url_from_file( dirname( __FILE__ ) );
+		wp_enqueue_style( 'ite-easy-canadian-sales-taxes-addon', $url_base . '/styles/taxes.css' );
+		
+	}
+
+}
+add_action( 'wp_enqueue_scripts', 'it_exchange_easy_canadian_sales_taxes_load_public_scripts' );
+add_action( 'it_exchange_enqueue_super_widget_scripts', 'it_exchange_easy_canadian_sales_taxes_load_public_scripts' );
+
+/**
  * Add Easy Canadian Sales Taxes to the content-cart totals and content-checkout loop
  *
  * @since 1.0.0
