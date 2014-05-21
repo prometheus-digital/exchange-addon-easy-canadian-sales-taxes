@@ -26,7 +26,7 @@
 function it_exchange_register_easy_canadian_sales_taxes_addon() {
 	$options = array(
 		'name'              => __( 'Easy Canadian Sales Taxes', 'LION' ),
-		'description'       => __( 'With the power of TaxCloud, store owners can now charge the proper tax for each of their product types, regardless of where their customers live in the United States.', 'LION' ),
+		'description'       => __( 'Now store owners can now charge the proper tax for each of their product types, regardless of where their customers live in the Canada.', 'LION' ),
 		'author'            => 'iThemes',
 		'author_url'        => 'http://ithemes.com/exchange/easy-canadian-sales-taxes/',
 		'icon'              => ITUtility::get_url_from_file( dirname( __FILE__ ) . '/lib/images/taxes50px.png' ),
