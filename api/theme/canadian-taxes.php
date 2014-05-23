@@ -79,17 +79,25 @@ class IT_Theme_API_Canadian_Taxes implements IT_Theme_API {
 		if ( it_exchange_easy_canadian_sales_taxes_setup_session() ) {
 			$tax_session = it_exchange_get_session_data( 'addon_easy_canadian_sales_taxes' );
 			$result .= '<ul class="canadian-sales-taxes">';
+			$total_tax = 0;
 			foreach ( $tax_session['taxes'] as $tax ) {
 				if ( $tax['shipping'] ) {
 					$taxes = $tax_session['cart_subtotal_w_shipping'] * ( $tax['rate'] / 100 );
 				} else {
 					$taxes = $tax_session['cart_subtotal'] * ( $tax['rate'] / 100 );
 				}
+				$total_tax += $taxes;
 				if ( !empty( $taxes ) ) {
 					if ( $options['format_price'] )
 						$taxes = it_exchange_format_price( $taxes );
 					$result .= '<li>' . $taxes . ' (' . $tax['type'] . ')</li>';
 				}
+			}
+			
+			if ( empty( $total_tax ) ) {
+				if ( $options['format_price'] )
+					$total_tax = it_exchange_format_price( $total_tax );
+				$result .= '<li>' . $total_tax . '</li>';
 			}
 			$result .= '</ul>';
 		} else {		

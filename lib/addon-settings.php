@@ -195,9 +195,10 @@ class IT_Exchange_Easy_Canadian_Sales_Taxes_Add_On {
 	}
 
 	function print_settings_page() {
+		global $new_values;
 		$settings = it_exchange_get_option( 'addon_easy_canadian_sales_taxes', true );
 	
-		$form_values  = empty( $this->error_message ) ? $settings : ITForm::get_post_data();
+		$form_values  = empty( $this->error_message ) ? $settings : $new_values;
 		$form_options = array(
 			'id'      => apply_filters( 'it_exchange_add_on_easy_canadian_sales_taxes', 'it-exchange-add-on-easy-canadian-sales-taxes-settings' ),
 			'enctype' => apply_filters( 'it_exchange_add_on_easy_canadian_sales_taxes_settings_form_enctype', false ),
@@ -304,26 +305,29 @@ class IT_Exchange_Easy_Canadian_Sales_Taxes_Add_On {
 
         $errors = apply_filters( 'it_exchange_add_on_easy_canadian_sales_taxes_validate_settings', $this->get_form_errors( $new_values ), $new_values );
         
-        if ( empty( $errors ) ) {
+        if ( !empty( $new_values['tax-rates'] ) ) {
 	        foreach( $new_values['tax-rates'] as $value ) {
 	        	if ( !empty( $organized_values['tax-rates'][$value['province']] ) ) {
 			        array_push( $organized_values['tax-rates'][$value['province']], array(
-			        	'type'     => $value['type'],
-			        	'rate'     => $value['rate'],
-			        	'shipping' => $value['shipping'],
+			        	'type'     => !empty( $value['type'] ) ? $value['type'] : '',
+			        	'rate'     => !empty( $value['rate'] ) ? $value['rate'] : '',
+			        	'shipping' => !empty( $value['shipping'] ) ? $value['shipping'] : '',
 			        ) );
 	        	} else {
 			        $organized_values['tax-rates'][$value['province']] = array(
 				        array(
-				        	'type'     => $value['type'],
-				        	'rate'     => $value['rate'],
-				        	'shipping' => $value['shipping'],
+				        	'type'     => !empty( $value['type'] ) ? $value['type'] : '',
+				        	'rate'     => !empty( $value['rate'] ) ? $value['rate'] : '',
+				        	'shipping' => !empty( $value['shipping'] ) ? $value['shipping'] : '',
 				        ),
 			        );
 		        }
 	        }
+	        $new_values['tax-rates'] = $organized_values['tax-rates'];
+        } else {
+	        $new_values = $defaults;
         }
-                        
+                                
         if ( ! $errors && it_exchange_save_option( 'addon_easy_canadian_sales_taxes', $organized_values ) ) {
             ITUtility::show_status_message( __( 'Settings saved.', 'LION' ) );
         } else if ( $errors ) {

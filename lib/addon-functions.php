@@ -5,7 +5,7 @@
  * @since 1.0.0
 */
 
-function it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $province, $rate=array() ) {
+function it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $province='AB', $rate=array() ) {
 	if ( empty( $rate ) ) { //just set some defaults
 		$rate['AB'] = array(
 			'type'     => 'GST',
