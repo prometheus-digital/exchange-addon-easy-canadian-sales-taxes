@@ -2,7 +2,7 @@
 /*
  * Plugin Name: iThemes Exchange - Easy Canadian Sales Taxes
  * Version: 1.0.0
- * Description: Adds Easy Canadian Sales Taxes to iThemes Exchange with the power of TaxCloud.
+ * Description: Adds Easy Canadian Sales Taxes to iThemes Exchange.
  * Plugin URI: http://ithemes.com/exchange/easy-canadian-sales-taxes/
  * Author: iThemes
  * Author URI: http://ithemes.com

@@ -154,13 +154,13 @@ function it_exchange_easy_canadian_sales_taxes_setup_session( $clear_cache=false
 }
 
 /**
- * Gets tax information from TaxCloud based on products in cart
+ * Gets tax information based on products in cart
  *
  * @since 1.0.0
  *
  * @param bool $format_price Whether or not to format the price or leave as a float
  * @param bool $clear_cache Whether or not to force clear any cached tax values
- * @return string The calculated tax from TaxCloud
+ * @return string The calculated tax
 */
 function it_exchange_easy_canadian_sales_taxes_addon_get_total_taxes_for_cart( $format_price=true, $clear_cache=false ) {
 	$taxes = 0;
