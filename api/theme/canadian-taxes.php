@@ -125,18 +125,20 @@ class IT_Theme_API_Canadian_Taxes implements IT_Theme_API {
 	        $transaction = $GLOBALS['it_exchange']['transaction'];
 	        $tax_items = get_post_meta( $transaction->ID, '_it_exchange_easy_canadian_sales_taxes', true );
 	    }
-						
-		$result .= $options['before'];
-		$result .= '<ul class="canadian-sales-taxes">';
-		foreach ( $tax_items as $tax ) {
-			if ( !empty( $tax['total'] ) ) {
-				if ( $options['format_price'] )
-					$tax['total'] = it_exchange_format_price( $tax['total'] );
-				$result .= '<li>' . $tax['total'] . ' (' . $tax['type'] . ')</li>';
+		
+		if ( !empty( $tax_items ) ) {
+			$result .= $options['before'];
+			$result .= '<ul class="canadian-sales-taxes">';
+			foreach ( $tax_items as $tax ) {
+				if ( !empty( $tax['total'] ) ) {
+					if ( $options['format_price'] )
+						$tax['total'] = it_exchange_format_price( $tax['total'] );
+					$result .= '<li>' . $tax['total'] . ' (' . $tax['type'] . ')</li>';
+				}
 			}
+			$result .= '</ul>';
+			$result .= $options['after'];
 		}
-		$result .= '</ul>';
-		$result .= $options['after'];
 		
 		return $result;
 	}
