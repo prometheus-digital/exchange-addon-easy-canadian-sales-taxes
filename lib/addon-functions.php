@@ -14,6 +14,8 @@ function it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $prov
 		);
 	}
 	
+	error_log( var_export( $rate, true ) );
+		
 	$output  = '<div class="item-row block-row">'; //start block-row
 	
 	$output .= '<div class="item-column block-column block-column-1">';
@@ -73,7 +75,10 @@ function it_exchange_easy_canadian_sales_taxes_get_tax_types() {
 
 function it_exchange_easy_canadian_sales_taxes_setup_session( $clear_cache=false ) {
 	$tax_session = it_exchange_get_session_data( 'addon_easy_canadian_sales_taxes' );
-	$settings = it_exchange_get_option( 'addon_easy_canadian_sales_taxes' );
+	$settings = it_exchange_get_option( 'addon_easy_canadian_sales_taxes', false, false );
+	if ( !empty( $settings ) )
+		$settings = it_exchange_get_option( 'addon_easy_canadian_sales_taxes' );
+		
 	$taxes = array();
 	$total_taxes = 0;
 	
