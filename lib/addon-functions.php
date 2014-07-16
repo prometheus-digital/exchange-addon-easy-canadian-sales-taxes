@@ -7,13 +7,13 @@
 
 function it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $province='AB', $rate=array() ) {
 	if ( empty( $rate ) ) { //just set some defaults
-		$rate['AB'] = array(
+		$rate = array(
 			'type'     => 'GST',
 			'rate'     => '5',
 			'shipping' => false,
 		);
 	}
-		
+	
 	$output  = '<div class="item-row block-row">'; //start block-row
 	
 	$output .= '<div class="item-column block-column block-column-1">';

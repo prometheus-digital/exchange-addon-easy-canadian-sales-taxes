@@ -196,7 +196,9 @@ class IT_Exchange_Easy_Canadian_Sales_Taxes_Add_On {
 
 	function print_settings_page() {
 		global $new_values;
-		$settings = it_exchange_get_option( 'addon_easy_canadian_sales_taxes', true );
+		$settings = it_exchange_get_option( 'addon_easy_canadian_sales_taxes', true, false );
+		if ( empty( $settings['tax-rates'] ) )
+			$settings = it_exchange_get_option( 'addon_easy_canadian_sales_taxes', true );
 	
 		$form_values  = empty( $this->error_message ) ? $settings : $new_values;
 		$form_options = array(
@@ -328,7 +330,7 @@ class IT_Exchange_Easy_Canadian_Sales_Taxes_Add_On {
 	        $new_values = $defaults;
         }
                                 
-        if ( ! $errors && it_exchange_save_option( 'addon_easy_canadian_sales_taxes', $organized_values ) ) {
+        if ( ! $errors && it_exchange_save_option( 'addon_easy_canadian_sales_taxes', $new_values ) ) {
             ITUtility::show_status_message( __( 'Settings saved.', 'LION' ) );
         } else if ( $errors ) {
             $errors = implode( '<br />', $errors );
