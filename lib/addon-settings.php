@@ -349,6 +349,7 @@ class IT_Exchange_Easy_Canadian_Sales_Taxes_Add_On {
     public function get_form_errors( $values ) {
 		$provinces = it_exchange_get_data_set( 'states', array( 'country' => 'CA' ) );
     	$tax_types = it_exchange_easy_canadian_sales_taxes_get_tax_types();
+    	$errors = array();
     	
     	if ( !empty( $values['tax-rates'] ) )
     		$tax_rates = $values['tax-rates'];
