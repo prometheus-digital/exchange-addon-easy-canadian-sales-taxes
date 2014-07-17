@@ -13,8 +13,6 @@ function it_exchange_easy_canadian_sales_taxes_get_tax_row_settings( $row, $prov
 			'shipping' => false,
 		);
 	}
-	
-	error_log( var_export( $rate, true ) );
 		
 	$output  = '<div class="item-row block-row">'; //start block-row
 	
