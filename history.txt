@@ -5,3 +5,7 @@
 1.0.2 - 2014-06-18 - Lew Ayotte
 	Fixed typo in plugin description
 	Verify non-empty tax items array
+1.0.3 - 2014-07-17 - Lew Ayotte
+	Don't merge defaults, unless no settings exist for tax rates
+	Fixing bug in saving tax rates (when removing a default province without replacing it) and PHP notice when adding new rates
+	Initializing error var
