@@ -130,6 +130,9 @@ function it_exchange_easy_canadian_sales_taxes_setup_session( $clear_cache=false
 		
 	} else {
 		$clear_cache = true; //not really any cache, but it's easier this way :)
+		$tax_session['province'] = $address['state'];
+		$tax_session['cart_subtotal'] = $cart_subtotal;
+		$tax_session['cart_subtotal_w_shipping'] = $cart_subtotal_w_shipping;
 	}
 	
 	if ( $clear_cache ) {
