@@ -18,3 +18,5 @@
 	Change out .live() calls for .on() calls in JS
 1.1.0 - 2015-04-20 - Lew Ayotte
 	Multiple updates involving add_query_arg and remove_query_arg to esc_url()
+1.1.1 - 2015-04-23 - Packaging Bot (lib/updater)
+	Compatibility Fix: Updated plugin and theme update data format to match changes in WordPress 4.2.
