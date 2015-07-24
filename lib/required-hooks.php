@@ -286,7 +286,7 @@ function it_exchange_easy_canadian_sales_taxes_replace_order_table_tag_before_to
 		}
 		?>
 		<tr>
-			<td colspan="2" style="padding: 10px;border:1px solid #DDD;"><?php _e( 'Taxes', 'it-l10n-ithemes-exchange' ); ?></td>
+			<td colspan="2" style="padding: 10px;border:1px solid #DDD;"><?php _e( 'Taxes', 'LION' ); ?></td>
 			<td style="padding: 10px;border:1px solid #DDD;"><?php echo $taxes; ?></td>
 		</tr>
 		<?php
