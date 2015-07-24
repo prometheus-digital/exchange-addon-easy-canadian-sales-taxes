@@ -267,9 +267,29 @@ add_action( 'it_exchange_add_transaction_success', 'it_exchange_easy_canadian_sa
  * @return string
  *
 */
-function it_exchange_easy_eu_canadian_sales_taxes_add_cart_taxes_to_txn_object() {
+function it_exchange_easy_canadian_sales_taxes_add_cart_taxes_to_txn_object() {
     $formatted = ( 'it_exchange_set_transaction_objet_cart_taxes_formatted' == current_filter() );
     return it_exchange_easy_canadian_sales_taxes_addon_get_total_taxes_for_cart( $formatted );
 }
-add_filter( 'it_exchange_set_transaction_objet_cart_taxes_formatted', 'it_exchange_easy_eu_canadian_sales_taxes_add_cart_taxes_to_txn_object' );
-add_filter( 'it_exchange_set_transaction_objet_cart_taxes_raw', 'it_exchange_easy_eu_canadian_sales_taxes_add_cart_taxes_to_txn_object' );
+add_filter( 'it_exchange_set_transaction_objet_cart_taxes_formatted', 'it_exchange_easy_canadian_sales_taxes_add_cart_taxes_to_txn_object' );
+add_filter( 'it_exchange_set_transaction_objet_cart_taxes_raw', 'it_exchange_easy_canadian_sales_taxes_add_cart_taxes_to_txn_object' );
+
+function it_exchange_easy_canadian_sales_taxes_replace_order_table_tag_before_total_row( $email_obj, $options ) {
+    $tax_items = get_post_meta( $email_obj->transaction_id, '_it_exchange_easy_canadian_sales_taxes', true );
+	if ( !empty( $tax_items ) ) {
+		$taxes = '';
+		foreach ( $tax_items as $tax ) {
+			if ( !empty( $tax['total'] ) ) {
+				$tax['total'] = it_exchange_format_price( $tax['total'] );
+				$taxes .= '<p>' . $tax['total'] . ' (' . $tax['type'] . ')</p>';
+			}
+		}
+		?>
+		<tr>
+			<td colspan="2" style="padding: 10px;border:1px solid #DDD;"><?php _e( 'Taxes', 'it-l10n-ithemes-exchange' ); ?></td>
+			<td style="padding: 10px;border:1px solid #DDD;"><?php echo $taxes; ?></td>
+		</tr>
+		<?php
+	}
+}
+add_action( 'it_exchange_replace_order_table_tag_before_total_row', 'it_exchange_easy_canadian_sales_taxes_replace_order_table_tag_before_total_row', 10, 2 );
