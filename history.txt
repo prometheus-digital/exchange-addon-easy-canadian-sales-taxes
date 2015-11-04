@@ -25,3 +25,5 @@
 1.2.0 - 2015-07-27 - Lew Ayotte
 	Added action to modify email notification order_table template
 	Fix bug when calculating taxes when no shipping address is availabe - but it is stored
+1.3.0 - 2015-11-04 - Lew Ayotte
+	PHP7 Updates
