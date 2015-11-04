@@ -16,7 +16,7 @@ class IT_Exchange_Product_Feature_Product_Canadian_Tax_Exempt_Status {
 	 * @since 1.0.0
 	 * @return void
 	*/
-	function IT_Exchange_Product_Feature_Product_Canadian_Tax_Exempt_Status() {
+	function __construct() {
 		if ( is_admin() ) {
 			add_action( 'load-post-new.php', array( $this, 'init_feature_metaboxes' ) );
 			add_action( 'load-post.php', array( $this, 'init_feature_metaboxes' ) );
@@ -27,6 +27,16 @@ class IT_Exchange_Product_Feature_Product_Canadian_Tax_Exempt_Status {
 		add_filter( 'it_exchange_get_product_feature_canadian-tax-exempt-status', array( $this, 'get_feature' ), 9, 2 );
 		add_filter( 'it_exchange_product_has_feature_canadian-tax-exempt-status', array( $this, 'product_has_feature') , 9, 2 );
 		add_filter( 'it_exchange_product_supports_feature_canadian-tax-exempt-status', array( $this, 'product_supports_feature') , 9, 2 );
+	}
+	
+	/**
+	 * Constructor. Registers hooks
+	 *
+	 * @since 1.0.0
+	 * @return void
+	*/
+	function IT_Exchange_Product_Feature_Product_Canadian_Tax_Exempt_Status() {
+		self::__construct();
 	}
 
 	/**
