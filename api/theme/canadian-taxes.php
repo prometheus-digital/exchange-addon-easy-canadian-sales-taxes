@@ -39,11 +39,22 @@ class IT_Theme_API_Canadian_Taxes implements IT_Theme_API {
 	 *
 	 * @return void
 	*/
-	function IT_Theme_API_Canadian_Taxes() {
+	function __construct() {
 		$this->_address = it_exchange_get_cart_shipping_address();
 		//We only care about the province!
 		if ( empty( $this->_address['state'] ) ) 
 			$this->_address = it_exchange_get_cart_billing_address();
+	}
+
+	/**
+	 * Deprecated Constructor
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	*/
+	function IT_Theme_API_Canadian_Taxes() {
+		self::__construct();
 	}
 
 	/**
