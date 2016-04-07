@@ -293,3 +293,45 @@ function it_exchange_easy_canadian_sales_taxes_replace_order_table_tag_before_to
 	}
 }
 add_action( 'it_exchange_replace_order_table_tag_before_total_row', 'it_exchange_easy_canadian_sales_taxes_replace_order_table_tag_before_total_row', 10, 2 );
+
+
+/**
+ * Add a taxes row to the receipt.
+ *
+ * @since 1.36
+ */
+function it_exchange_easy_canadian_taxes_add_taxes_row_to_receipt() {
+
+	if ( empty( $GLOBALS['it_exchange']['transaction'] ) ) {
+		return;
+	}
+
+	$transaction = $GLOBALS['it_exchange']['transaction'];
+
+	$tax_items = get_post_meta( $transaction->ID, '_it_exchange_easy_canadian_sales_taxes', true );
+
+	if ( empty( $tax_items ) ) {
+		return;
+	}
+
+	$taxes = '';
+	foreach ( $tax_items as $tax ) {
+		if ( ! empty( $tax['total'] ) ) {
+			$tax['total'] = it_exchange_format_price( $tax['total'] );
+			$taxes .= $tax['total'] . ' (' . $tax['type'] . ')<br>';
+		}
+	}
+	?>
+	<tr>
+		<td></td>
+		<td align="right" style="padding: 10px; ">
+			<strong><?php _e( 'Taxes', 'LION' ); ?></strong>
+		</td>
+		<td align="right" style="padding: 10px 0 10px 10px; ">
+			<?php echo $taxes; ?>
+		</td>
+	</tr>
+	<?php
+}
+
+add_action( 'it_exchange_email_template_receipt_cart-totals_after_subtotal', 'it_exchange_easy_canadian_taxes_add_taxes_row_to_receipt' );
