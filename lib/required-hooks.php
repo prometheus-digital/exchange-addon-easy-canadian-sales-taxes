@@ -9,7 +9,6 @@
 //incase a product doesn't have a shipping address and the shipping add-on is not enabled
 add_filter( 'it_exchange_billing_address_purchase_requirement_enabled', '__return_true' );
 
-
 /**
  * Shows the nag when needed.
  *
@@ -166,8 +165,6 @@ function it_exchange_easy_canadian_sales_taxes_addon_add_taxes_to_template_total
 	array_splice( $elements, $index, 0, 'easy-canadian-sales-taxes' );
 	return $elements;
 }
-add_filter( 'it_exchange_get_content_checkout_totals_elements', 'it_exchange_easy_canadian_sales_taxes_addon_add_taxes_to_template_totals_elements' );
-add_filter( 'it_exchange_get_content_confirmation_transaction_summary_elements', 'it_exchange_easy_canadian_sales_taxes_addon_add_taxes_to_template_totals_elements' );
 
 /**
  * Add Easy Canadian Sales Taxes to the super-widget-checkout totals loop
@@ -190,7 +187,6 @@ function it_exchange_easy_canadian_sales_taxes_addon_add_taxes_to_sw_template_to
 	array_splice( $loops, $index, 0, 'easy-canadian-sales-taxes' );
 	return $loops;
 }
-add_filter( 'it_exchange_get_super-widget-checkout_after-cart-items_loops', 'it_exchange_easy_canadian_sales_taxes_addon_add_taxes_to_sw_template_totals_loops' );
 
 /**
  * Adds our templates directory to the list of directories
@@ -220,7 +216,6 @@ function it_exchange_easy_canadian_sales_taxes_addon_taxes_register_templates( $
 	$template_paths[] = dirname( __FILE__ ) . '/templates';
 	return $template_paths;
 }
-add_filter( 'it_exchange_possible_template_paths', 'it_exchange_easy_canadian_sales_taxes_addon_taxes_register_templates', 10, 2 );
 
 /**
  * Adjcanadiants the cart total if on a checkout page
@@ -235,7 +230,35 @@ function it_exchange_easy_canadian_sales_taxes_addon_taxes_modify_total( $total 
 		$total += it_exchange_easy_canadian_sales_taxes_addon_get_total_taxes_for_cart( false );
 	return $total;
 }
-add_filter( 'it_exchange_get_cart_total', 'it_exchange_easy_canadian_sales_taxes_addon_taxes_modify_total' );
+
+/**
+ * Add tax when a new product is added to the cart.
+ *
+ * @since 1.4.0
+ *
+ * @param \ITE_Cart_Product $product
+ * @param \ITE_Cart         $cart
+ */
+function it_exchange_easy_canadian_sales_taxes_add_tax_on_new_product( ITE_Cart_Product $product, ITE_Cart $cart ) {
+
+	$address = $cart->get_shipping_address() ? $cart->get_shipping_address() : $cart->get_billing_address();
+
+	if ( ! $address || $address['country'] !== 'CA' ) {
+		return;
+	}
+
+	$provider = new ITE_Canadian_Taxes_Provider();
+	$rates = $provider->get_rates_for_state( $address['state'] );
+
+	foreach ( $rates as $rate ) {
+		$product->add_tax( ITE_Canadian_Tax_Item::create( $rate, $product ) );
+		$product->persist( $cart->get_repository() );
+	}
+
+	it_exchange_easy_canadian_sales_taxes_setup_session();
+}
+
+add_action( 'it_exchange_add_product_to_cart', 'it_exchange_easy_canadian_sales_taxes_add_tax_on_new_product', 10, 2 );
 
 /**
  * Save Taxes to Transaction Meta
@@ -255,8 +278,8 @@ function it_exchange_easy_canadian_sales_taxes_transaction_hook( $transaction_id
 	}
 	
 	it_exchange_clear_session_data( 'addon_easy_canadian_sales_taxes' );
-	return;
 }
+
 add_action( 'it_exchange_add_transaction_success', 'it_exchange_easy_canadian_sales_taxes_transaction_hook' );
 /**
  * Adds the cart taxes to the transaction object
@@ -271,8 +294,6 @@ function it_exchange_easy_canadian_sales_taxes_add_cart_taxes_to_txn_object() {
     $formatted = ( 'it_exchange_set_transaction_objet_cart_taxes_formatted' == current_filter() );
     return it_exchange_easy_canadian_sales_taxes_addon_get_total_taxes_for_cart( $formatted );
 }
-add_filter( 'it_exchange_set_transaction_objet_cart_taxes_formatted', 'it_exchange_easy_canadian_sales_taxes_add_cart_taxes_to_txn_object' );
-add_filter( 'it_exchange_set_transaction_objet_cart_taxes_raw', 'it_exchange_easy_canadian_sales_taxes_add_cart_taxes_to_txn_object' );
 
 function it_exchange_easy_canadian_sales_taxes_replace_order_table_tag_before_total_row( $email_obj, $options ) {
     $tax_items = get_post_meta( $email_obj->transaction_id, '_it_exchange_easy_canadian_sales_taxes', true );
@@ -298,7 +319,7 @@ add_action( 'it_exchange_replace_order_table_tag_before_total_row', 'it_exchange
 /**
  * Add a taxes row to the receipt.
  *
- * @since 1.36
+ * @since 1.4
  */
 function it_exchange_easy_canadian_taxes_add_taxes_row_to_receipt() {
 
