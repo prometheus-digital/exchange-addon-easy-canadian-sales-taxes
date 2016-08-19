@@ -10,6 +10,19 @@
 add_filter( 'it_exchange_billing_address_purchase_requirement_enabled', '__return_true' );
 
 /**
+ * Register the canadian taxes provider.
+ *
+ * @since 1.36.0
+ *
+ * @param \ITE_Tax_Managers $manager
+ */
+function it_exchange_register_canadian_taxes_provider( ITE_Tax_Managers $manager ) {
+	$manager::register_provider( new ITE_Canadian_Taxes_Provider() );
+}
+
+add_action( 'it_exchange_register_tax_providers', 'it_exchange_register_canadian_taxes_provider' );
+
+/**
  * Shows the nag when needed.
  *
  * @since 1.0.0
@@ -230,35 +243,6 @@ function it_exchange_easy_canadian_sales_taxes_addon_taxes_modify_total( $total 
 		$total += it_exchange_easy_canadian_sales_taxes_addon_get_total_taxes_for_cart( false );
 	return $total;
 }
-
-/**
- * Add tax when a new product is added to the cart.
- *
- * @since 1.4.0
- *
- * @param \ITE_Cart_Product $product
- * @param \ITE_Cart         $cart
- */
-function it_exchange_easy_canadian_sales_taxes_add_tax_on_new_product( ITE_Cart_Product $product, ITE_Cart $cart ) {
-
-	$address = $cart->get_shipping_address() ? $cart->get_shipping_address() : $cart->get_billing_address();
-
-	if ( ! $address || $address['country'] !== 'CA' ) {
-		return;
-	}
-
-	$provider = new ITE_Canadian_Taxes_Provider();
-	$rates = $provider->get_rates_for_state( $address['state'] );
-
-	foreach ( $rates as $rate ) {
-		$product->add_tax( ITE_Canadian_Tax_Item::create( $rate, $product ) );
-		$product->persist( $cart->get_repository() );
-	}
-
-	it_exchange_easy_canadian_sales_taxes_setup_session();
-}
-
-add_action( 'it_exchange_add_product_to_cart', 'it_exchange_easy_canadian_sales_taxes_add_tax_on_new_product', 10, 2 );
 
 /**
  * Save Taxes to Transaction Meta

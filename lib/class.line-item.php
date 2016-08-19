@@ -148,13 +148,8 @@ class ITE_Canadian_Tax_Item extends ITE_Line_Item implements ITE_Tax_Line_Item {
 	/**
 	 * @inheritDoc
 	 */
-	public function persist( ITE_Line_Item_Repository $repository ) {
-
-		if ( $repository instanceof ITE_Line_Item_Transaction_Repository ) {
-			$this->set_param( 'rate', $this->get_rate() );
-		}
-
-		return parent::persist( $repository );
+	public function freeze() {
+		$this->set_param( 'rate', $this->get_rate() );
 	}
 
 	/**
