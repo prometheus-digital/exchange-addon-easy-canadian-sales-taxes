@@ -83,11 +83,14 @@ function it_exchange_easy_canadian_sales_taxes_setup_session( $clear_cache = fal
 	$tax_session   = it_exchange_get_session_data( 'addon_easy_canadian_sales_taxes' );
 	$cart_subtotal = 0;
 
-	foreach ( $cart->get_items() as $item ) {
+	foreach ( $cart->get_items()->without( 'shipping' ) as $item ) {
 		if ( $item instanceof ITE_Taxable_Line_Item && ! $item->is_tax_exempt( $provider ) ) {
 			$cart_subtotal += $item->get_total();
 		}
 	}
+
+	$tax_session['cart_subtotal']            = $cart_subtotal;
+	$tax_session['cart_subtotal_w_shipping'] = $cart_subtotal + $cart->calculate_total( 'shipping' );
 
 	$taxes = $cart->get_items( 'tax', true )->with_only_instances_of( 'ITE_Canadian_Tax_Item' );
 	$data  = array();

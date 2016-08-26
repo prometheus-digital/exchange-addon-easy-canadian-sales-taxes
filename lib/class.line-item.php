@@ -126,9 +126,7 @@ class ITE_Canadian_Tax_Item extends ITE_Line_Item implements ITE_Tax_Line_Item {
 	 */
 	public function applies_to( ITE_Taxable_Line_Item $item ) {
 
-		$rate = $this->rate;
-
-		if ( $item instanceof ITE_Shipping_Line_Item && ! $rate->applies_to_shipping() ) {
+		if ( $item instanceof ITE_Shipping_Line_Item && ! $this->applies_to_shipping() ) {
 			return false;
 		}
 
@@ -150,6 +148,9 @@ class ITE_Canadian_Tax_Item extends ITE_Line_Item implements ITE_Tax_Line_Item {
 	 */
 	public function freeze() {
 		$this->set_param( 'rate', $this->get_rate() );
+		$this->set_param( 'applies_to_shipping', $this->get_tax_rate()->applies_to_shipping() );
+
+		parent::freeze();
 	}
 
 	/**
@@ -157,6 +158,21 @@ class ITE_Canadian_Tax_Item extends ITE_Line_Item implements ITE_Tax_Line_Item {
 	 */
 	public function get_provider() {
 		return new ITE_Canadian_Taxes_Provider();
+	}
+
+	/**
+	 * Whether this tax item applies to shipping items.
+	 *
+	 * @since 1.36.0
+	 *
+	 * @return bool
+	 */
+	protected function applies_to_shipping() {
+		if ( $this->has_param( 'applies_to_shipping' ) ) {
+			return (bool) $this->get_param( 'applies_to_shipping' );
+		}
+
+		return $this->get_tax_rate()->applies_to_shipping();
 	}
 
 	/**
