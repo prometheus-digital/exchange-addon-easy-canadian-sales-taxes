@@ -157,7 +157,7 @@ class ITE_Canadian_Tax_Item extends ITE_Line_Item implements ITE_Tax_Line_Item {
 		}
 
 		foreach ( $item->get_taxes() as $tax ) {
-			if ( $tax instanceof self ) {
+			if ( (string) $tax->get_tax_rate() === (string) $this->get_tax_rate() ) {
 				return false; // Duplicate taxes are not allowed
 			}
 		}
