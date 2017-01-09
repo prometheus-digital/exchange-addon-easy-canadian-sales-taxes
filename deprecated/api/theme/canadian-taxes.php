@@ -18,7 +18,7 @@ class IT_Theme_API_Canadian_Taxes implements IT_Theme_API {
 	/**
 	 * Current customer Address
 	 * @var string $_address
-	 * @since 2.0.0
+	 * @since 1.4.0
 	*/
 	private $_address = '';
 	

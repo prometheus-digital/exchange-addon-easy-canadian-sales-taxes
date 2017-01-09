@@ -2,7 +2,7 @@
 /**
  * Canadian Tax Line Item.
  *
- * @since   1.4.0
+ * @since   2.0.0
  * @license GPLv2
  */
 
@@ -29,7 +29,7 @@ class ITE_Canadian_Tax_Item extends ITE_Line_Item implements ITE_Tax_Line_Item {
 	/**
 	 * Create a new canadian tax item.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param \ITE_Canadian_Tax_Rate      $rate
 	 * @param \ITE_Taxable_Line_Item|null $item
@@ -54,7 +54,7 @@ class ITE_Canadian_Tax_Item extends ITE_Line_Item implements ITE_Tax_Line_Item {
 	/**
 	 * Generate the ID.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param ITE_Canadian_Tax_Rate $rate
 	 *
@@ -200,7 +200,7 @@ class ITE_Canadian_Tax_Item extends ITE_Line_Item implements ITE_Tax_Line_Item {
 	/**
 	 * Get the tax rate.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return \ITE_Canadian_Tax_Rate|null
 	 */

@@ -1,0 +1,31 @@
+1.0.0 - 2014-06-04 - Lew Ayotte
+	Initial Release
+1.0.1 - 2014-06-04 - Lew Ayotte
+	Updating Add-on Icon
+1.0.2 - 2014-06-18 - Lew Ayotte
+	Fixed typo in plugin description
+	Verify non-empty tax items array
+1.0.3 - 2014-07-17 - Lew Ayotte
+	Don't merge defaults, unless no settings exist for tax rates
+	Fixing bug in saving tax rates (when removing a default province without replacing it) and PHP notice when adding new rates
+	Initializing error var
+1.0.4 - 2014-09-04 - Lew Ayotte
+	Fix undefined index in tax session
+1.0.5 - 2014-11-14 - Packaging Bot (lib/updater)
+	Enhancement: Reduced caching to allow updates to appear more quickly.
+	Enhancement: Authenticating users now uses the new authentication system.
+1.0.6 - 2014-11-20 - Lew Ayotte
+	Change out .live() calls for .on() calls in JS
+1.1.0 - 2015-04-20 - Lew Ayotte
+	Multiple updates involving add_query_arg and remove_query_arg to esc_url()
+1.1.1 - 2015-04-23 - Packaging Bot (lib/updater)
+	Compatibility Fix: Updated plugin and theme update data format to match changes in WordPress 4.2.
+1.1.2 - 2015-07-14 - Packaging Bot (lib/updater)
+	Enhancement: Updated link to iThemes support.
+1.2.0 - 2015-07-27 - Lew Ayotte
+	Added action to modify email notification order_table template
+	Fix bug when calculating taxes when no shipping address is availabe - but it is stored
+1.3.0 - 2015-11-04 - Lew Ayotte
+	PHP7 Updates
+1.3.1 - 2015-11-09 - Lew Ayotte	
+	Missed a PHP7 Update

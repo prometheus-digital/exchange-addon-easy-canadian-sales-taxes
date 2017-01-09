@@ -28,7 +28,7 @@ class ITE_Canadian_Taxes_Provider extends ITE_Tax_Provider {
 	/**
 	 * Get all of the tax rates for a given state.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param string $state
 	 *

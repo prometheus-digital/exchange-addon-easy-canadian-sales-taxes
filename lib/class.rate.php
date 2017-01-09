@@ -2,7 +2,7 @@
 /**
  * Canadian Tax Rate.
  *
- * @since   1.4.0
+ * @since   2.0.0
  * @license GPLv2
  */
 
@@ -36,7 +36,7 @@ class ITE_Canadian_Tax_Rate {
 	/**
 	 * Create the tax rate from a code.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param string $code
 	 *
@@ -69,7 +69,7 @@ class ITE_Canadian_Tax_Rate {
 	/**
 	 * Get the rate's country.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */
@@ -87,7 +87,7 @@ class ITE_Canadian_Tax_Rate {
 	/**
 	 * Get the type of this rate, HST, PST, or GST.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */
@@ -96,7 +96,7 @@ class ITE_Canadian_Tax_Rate {
 	/**
 	 * Does this rate apply to shipping.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return bool
 	 */
@@ -105,7 +105,7 @@ class ITE_Canadian_Tax_Rate {
 	/**
 	 * Convert the rate to an array.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return array
 	 */
