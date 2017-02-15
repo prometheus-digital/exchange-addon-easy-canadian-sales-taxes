@@ -42,4 +42,5 @@ add_action( 'it_exchange_register_addons', 'it_exchange_register_easy_canadian_s
 function it_exchange_easy_canadian_sales_taxes_set_textdomain() {
 	load_plugin_textdomain( 'LION', false, dirname( plugin_basename( __FILE__  ) ) . '/lang/' );
 }
-add_action( 'plugins_loaded', 'it_exchange_easy_canadian_sales_taxes_set_textdomain' );
+
+it_exchange_easy_canadian_sales_taxes_set_textdomain();
