@@ -44,7 +44,17 @@ class ITE_Canadian_Tax_Rate {
 	 */
 	public static function from_code( $code ) {
 
-		list( $state, $index ) = explode( ':', $code );
+		if ( empty( $code ) ) {
+			return null;
+		}
+
+		$parts = explode( ':', $code );
+
+		if ( count( $parts ) < 2 ) {
+			return null;
+		}
+
+		list( $state, $index ) = $parts;
 
 		$settings = it_exchange_get_option( 'addon_easy_canadian_sales_taxes', true, false );
 
