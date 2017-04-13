@@ -215,4 +215,15 @@ class ITE_Canadian_Tax_Item extends ITE_Line_Item implements ITE_Tax_Line_Item {
 	 * @inheritDoc
 	 */
 	public function get_aggregate() { return $this->aggregate; }
+
+	/**
+	 * @inheritDoc
+	 */
+	public function __clone() {
+		parent::__clone();
+
+		if ( $this->rate ) {
+			$this->rate = clone $this->rate;
+		}
+	}
 }

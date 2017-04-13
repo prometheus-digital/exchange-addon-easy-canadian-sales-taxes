@@ -248,7 +248,7 @@ function it_exchange_easy_canadian_sales_taxes_replace_order_table_tag_before_to
 	if ( !empty( $tax_items ) ) {
 		$taxes = '';
 		foreach ( $tax_items as $tax ) {
-			if ( !empty( $tax['total'] ) ) {
+			if ( !empty( $tax['total'] ) && ! empty( $tax['type'] ) ) {
 				$tax['total'] = it_exchange_format_price( $tax['total'] );
 				$taxes .= '<p>' . $tax['total'] . ' (' . $tax['type'] . ')</p>';
 			}

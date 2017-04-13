@@ -14,13 +14,6 @@ class ITE_Canadian_Taxes_Provider extends ITE_Tax_Provider {
 	/**
 	 * @inheritDoc
 	 */
-	public function get_tax_code_for_product( IT_Exchange_Product $product ) {
-		return '';
-	}
-
-	/**
-	 * @inheritDoc
-	 */
 	public function is_product_tax_exempt( IT_Exchange_Product $product ) {
 		return (bool) $product->get_feature( 'canadian-tax-exempt-status' );
 	}
@@ -72,7 +65,7 @@ class ITE_Canadian_Taxes_Provider extends ITE_Tax_Provider {
 
 		foreach ( $rates as $rate ) {
 			$item->add_tax( ITE_Canadian_Tax_Item::create( $rate, $item ) );
-			$cart->get_repository()->save( $item );
+			$cart->save_item( $item );
 		}
 	}
 
