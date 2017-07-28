@@ -1,13 +1,13 @@
 <?php
 /**
- * iThemes Exchange Easy Canadian Sales Taxes Add-on
+ * ExchangeWP Easy Canadian Sales Taxes Add-on
  * Canadian Taxes Theme Class
  * @package exchange-addon-easy-canadian-sales-taxes
  * @since 1.0.0
 */
 
 class IT_Theme_API_Canadian_Taxes implements IT_Theme_API {
-	
+
 	/**
 	 * API context
 	 * @var string $_context
@@ -21,7 +21,7 @@ class IT_Theme_API_Canadian_Taxes implements IT_Theme_API {
 	 * @since 1.4.0
 	*/
 	private $_address = '';
-	
+
 	/**
 	 * Maps api tags to methods
 	 * @var array $_tag_map
@@ -42,7 +42,7 @@ class IT_Theme_API_Canadian_Taxes implements IT_Theme_API {
 	function __construct() {
 		$this->_address = it_exchange_get_cart_shipping_address();
 		//We only care about the province!
-		if ( empty( $this->_address['state'] ) ) 
+		if ( empty( $this->_address['state'] ) )
 			$this->_address = it_exchange_get_cart_billing_address();
 	}
 
@@ -58,10 +58,10 @@ class IT_Theme_API_Canadian_Taxes implements IT_Theme_API {
 	}
 
 	/**
-	 * Returns the context. Also helps to confirm we are an iThemes Exchange theme API class
+	 * Returns the context. Also helps to confirm we are an ExchangeWP theme API class
 	 *
 	 * @since 1.0.0
-	 * 
+	 *
 	 * @return string
 	*/
 	function get_api_context() {
@@ -73,18 +73,18 @@ class IT_Theme_API_Canadian_Taxes implements IT_Theme_API {
 	 * @return string
 	*/
 	function taxes( $options=array() ) {
-					
+
 		$settings  = it_exchange_get_option( 'addon_easy_canadian_sales_taxes' );
 		$result = '';
 		$taxes = 0;
-		
+
 		$defaults      = array(
 			'before'       => '',
 			'after'        => '',
 			'format_price' => true,
 		);
 		$options      = ITUtility::merge_defaults( $options, $defaults );
-		
+
 
 		$result .= $options['before'];
 		if ( it_exchange_easy_canadian_sales_taxes_setup_session() ) {
@@ -104,39 +104,39 @@ class IT_Theme_API_Canadian_Taxes implements IT_Theme_API {
 					$result .= '<li>' . $taxes . ' (' . $tax['type'] . ')</li>';
 				}
 			}
-			
+
 			if ( empty( $total_tax ) ) {
 				if ( $options['format_price'] )
 					$total_tax = it_exchange_format_price( $total_tax );
 				$result .= '<li>' . $total_tax . '</li>';
 			}
 			$result .= '</ul>';
-		} else {		
+		} else {
 			if ( $options['format_price'] )
 				$taxes = it_exchange_format_price( $taxes );
 			$result .= $taxes;
 		}
 		$result .= $options['after'];
-		
+
 		return $result;
-					
+
 	}
-	
+
 	function confirmation_taxes( $options=array() ) {
 		$result = '';
-		
+
 		$defaults      = array(
 			'before'       => '',
 			'after'        => '',
 			'format_price' => true,
 		);
 		$options      = ITUtility::merge_defaults( $options, $defaults );
-			
+
 	    if ( !empty( $GLOBALS['it_exchange']['transaction'] ) ) {
 	        $transaction = $GLOBALS['it_exchange']['transaction'];
 	        $tax_items = get_post_meta( $transaction->ID, '_it_exchange_easy_canadian_sales_taxes', true );
 	    }
-		
+
 		if ( !empty( $tax_items ) ) {
 			$result .= $options['before'];
 			$result .= '<ul class="canadian-sales-taxes">';
@@ -150,7 +150,7 @@ class IT_Theme_API_Canadian_Taxes implements IT_Theme_API {
 			$result .= '</ul>';
 			$result .= $options['after'];
 		}
-		
+
 		return $result;
 	}
 }

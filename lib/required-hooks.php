@@ -1,11 +1,11 @@
 <?php
 /**
- * iThemes Exchange Easy Canadian Sales Taxes Add-on
+ * ExchangeWP Easy Canadian Sales Taxes Add-on
  * @package exchange-addon-easy-canadian-sales-taxes
  * @since 1.0.0
 */
 
-//For calculation shipping, we need to require billing addresses... 
+//For calculation shipping, we need to require billing addresses...
 //incase a product doesn't have a shipping address and the shipping add-on is not enabled
 add_filter( 'it_exchange_billing_address_purchase_requirement_enabled', '__return_true' );
 
@@ -25,7 +25,7 @@ function it_exchange_easy_canadian_sales_taxes_addon_show_conflict_nag() {
         return;
 
 	$taxes_addons = it_exchange_get_enabled_addons( array( 'category' => 'taxes' ) );
-	
+
 	if ( 1 < count( $taxes_addons ) ) {
 		?>
 		<div id="it-exchange-easy-canadian-sales-taxes-conflict-nag" class="it-exchange-nag">
@@ -57,7 +57,7 @@ add_action( 'admin_notices', 'it_exchange_easy_canadian_sales_taxes_addon_show_c
 */
 function it_exchange_easy_canadian_sales_taxes_addon_admin_wp_enqueue_scripts( $hook_suffix ) {
 	global $post;
-			
+
 	if ( isset( $_REQUEST['post_type'] ) ) {
 		$post_type = $_REQUEST['post_type'];
 	} else {
@@ -74,11 +74,11 @@ function it_exchange_easy_canadian_sales_taxes_addon_admin_wp_enqueue_scripts( $
 		if ( isset( $post ) && !empty( $post ) )
 			$post_type = $post->post_type;
 	}
-	
+
 	$url_base = ITUtility::get_url_from_file( dirname( __FILE__ ) );
-		
+
 	if ( !empty( $_GET['add-on-settings'] ) && 'exchange_page_it-exchange-addons' === $hook_suffix && 'easy-canadian-sales-taxes' === $_GET['add-on-settings'] ) {
-	
+
 		$deps = array( 'jquery' );
 		wp_enqueue_script( 'it-exchange-easy-canadian-sales-taxes-addon-admin-js', $url_base . '/js/admin.js' );
 
@@ -113,13 +113,13 @@ function it_exchange_easy_canadian_sales_taxes_addon_admin_wp_enqueue_styles() {
 		if ( isset( $post ) && !empty( $post ) )
 			$post_type = $post->post_type;
 	}
-	
+
 	// Easy US Sales Taxes settings page
 	if ( ( isset( $post_type ) && 'it_exchange_prod' === $post_type )
 		|| ( !empty( $_GET['add-on-settings'] ) && 'exchange_page_it-exchange-addons' === $hook_suffix && 'easy-canadian-sales-taxes' === $_GET['add-on-settings'] ) ) {
-		
+
 		wp_enqueue_style( 'it-exchange-easy-canadian-sales-taxes-addon-admin-style', ITUtility::get_url_from_file( dirname( __FILE__ ) ) . '/styles/admin.css' );
-		
+
 	}
 
 }
@@ -133,12 +133,12 @@ add_action( 'admin_print_styles', 'it_exchange_easy_canadian_sales_taxes_addon_a
  * @return void
 */
 function it_exchange_easy_canadian_sales_taxes_load_public_scripts( $current_view ) {
-	
+
 	if ( it_exchange_is_page( 'checkout' ) || it_exchange_is_page( 'confirmation' ) || it_exchange_in_superwidget() ) {
 
 		$url_base = ITUtility::get_url_from_file( dirname( __FILE__ ) );
 		wp_enqueue_style( 'ite-easy-canadian-sales-taxes-addon', $url_base . '/styles/taxes.css' );
-		
+
 	}
 
 }
@@ -158,7 +158,7 @@ function it_exchange_easy_canadian_sales_taxes_addon_add_taxes_to_template_total
 	$index = array_search( 'totals-savings', $elements );
 	if ( false === $index )
 		$index = -1;
-		
+
 	// Bump index by 1 to show tax after discounts
 	if ( -1 != $index )
 		$index++;
@@ -182,7 +182,7 @@ function it_exchange_easy_canadian_sales_taxes_addon_add_taxes_to_sw_template_to
 	$index = array_search( 'discounts', $loops );
 	if ( false === $index )
 		$index = -1;
-		
+
 	// Bump index by 1 to show tax after discounts
 	if ( -1 != $index )
 		$index++;
@@ -246,14 +246,14 @@ add_filter( 'it_exchange_get_cart_total', 'it_exchange_easy_canadian_sales_taxes
 */
 function it_exchange_easy_canadian_sales_taxes_transaction_hook( $transaction_id ) {
 	$tax_session = it_exchange_get_session_data( 'addon_easy_canadian_sales_taxes' );
-	
+
 	if ( !empty( $tax_session['taxes'] ) ) {
 		update_post_meta( $transaction_id, '_it_exchange_easy_canadian_sales_taxes', $tax_session['taxes'] );
 	}
 	if ( !empty( $tax_session['total_taxes'] ) ) {
 		update_post_meta( $transaction_id, '_it_exchange_easy_canadian_sales_taxes_total', $tax_session['total_taxes'] );
 	}
-	
+
 	it_exchange_clear_session_data( 'addon_easy_canadian_sales_taxes' );
 	return;
 }
